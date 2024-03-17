@@ -22,12 +22,27 @@ class SessionsController {
 
     const { secret, expiresIn } = authConfig.jwt;
 
-    const token = sign({}, secret, {
+    const token = sign({ role: user.role }, secret, {
       subject: String(user.id),
-      expiresIn
+      expiresIn,
     });
 
-    response.status(201).json({ token, user });
+    response.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "Strict",
+      secure: true,
+      maxAge: 15 * 60 * 1000,
+    });
+
+    delete user.password;
+
+    response.status(201).json({ user });
+  }
+
+  async logout(request, response) {
+    response.clearCookie("token");
+
+    response.status(204).json();
   }
 }
 
