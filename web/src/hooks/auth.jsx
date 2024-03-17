@@ -37,10 +37,12 @@ function AuthProvider({ children }) {
   }
 
   useEffect(() => {
-    const user = localStorage.getItem("@estock:user");
+    const userObject = JSON.parse(localStorage.getItem("@estock:user"));
 
-    if (user) {
-      setData({ user: JSON.parse(user) });
+    if (userObject?.name) {
+      setData({ user: userObject });
+    } else {
+      signOut();
     }
   }, []);
 
